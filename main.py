@@ -1,21 +1,13 @@
 import asyncio
+import logging
+from smtpprotocol import SMTP
 
 
-class EchoServerProtocol(asyncio.Protocol):
-    def connection_made(self, transport):
-        peername = transport.get_extra_info('peername')
-        print('Connection from {}'.format(peername))
-        self.transport = transport
-
-    def data_received(self, data):
-        message = data.decode()
-        print('Data received {!r}'.format(message))
-        self.transport.write(data)
-        self.transport.close()
-
+logging.basicConfig(level=logging.DEBUG)
+log = logging.getLogger('mail.log')
 
 loop = asyncio.get_event_loop()
-coro = loop.create_server(EchoServerProtocol, '127.0.0.1', 5000)
+coro = loop.create_server(SMTP, '127.0.0.1', 5000)
 server = loop.run_until_complete(coro)
 
 #loop.add_signal_handler(signal.SIGINT, loop.stop)
